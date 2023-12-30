@@ -12,7 +12,7 @@ export class Resource$GameOfficial {
 		const GameOffical: Schema$GameOfficial = {}
 
 		data.official?.forEach(element => {
-			const shelve = element.itemSectionRenderer.contents[0].shelfRenderer.title.runs[0].text;
+			const shelve = element.itemSectionRenderer.contents[0].shelfRenderer?.title.runs[0].text;
 			if (shelve === "From the game") {
 				const content: any[] = element.itemSectionRenderer.contents[0].shelfRenderer.content.horizontalListRenderer.items
 				GameOffical['fromGame'] = content.flatMap((item: any) => {
