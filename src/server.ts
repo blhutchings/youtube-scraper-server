@@ -3,6 +3,7 @@ import YouTube from './client/clients/YouTube.js';
 import YouTubeGotClient from './client/clients/YouTubeGotClient.js';
 import { SearchParams$Video } from './client/requests/Request$Video.js';
 import { SearchParams$Game } from './client/requests/Request$Game.js';
+import { HTTPError } from 'got';
 
 async function main() {
 	console.log("Creating HTTP Client...")
@@ -10,12 +11,12 @@ async function main() {
 	console.log("Http Client Created")
 	console.log("Http Client Default Header - ")
 	console.log(JSON.stringify(httpClient.headers, null, 2))
-	
+
 	var client = new YouTube(httpClient)
 
 	const app: Express = express()
 	app.use(express.json());
-	const port = 3000
+	const port = 5000
 
 
 	app.post('/video', async (req: Request, res: Response) => {
@@ -24,8 +25,14 @@ async function main() {
 			res.status(200).send(await client.video(body))
 			console.log(`POST - /video [200] - ${body.videoId}`)
 		} catch (err) {
-			res.status(500).send(err)
-			console.log(`POST - /video [500] - ${body.videoId}`)
+			if (err instanceof HTTPError) {
+				res.status(Number(err.code)).send(err)
+				console.log(`POST - /game [${err.code}] - ${body.videoId} - ${err}`)
+			} else {
+				res.status(500).send(err)
+				console.log(`POST - /video [500] - ${body.videoId}`)
+			}
+
 		}
 
 	});
@@ -36,8 +43,14 @@ async function main() {
 			res.status(200).send(await client.game(body))
 			console.log(`POST - /game [200] - ${body.browseId} - ${body.tab}`)
 		} catch (err) {
-			res.status(500).send(err)
-			console.log(`POST - /game [500] - ${body.browseId} - ${body.tab}`)
+			if (err instanceof HTTPError) {
+				res.status(Number(err.code)).send(err)
+				console.log(`POST - /game [${err.code}] - ${body.browseId} - ${body.tab} - ${err}`)
+			} else {
+				res.status(500).send(err)
+				console.log(`POST - /game [500] - ${body.browseId} - ${body.tab} - ${err}`)
+			}
+
 		}
 
 	});
