@@ -21,7 +21,7 @@ export class Resource$GameSnippet {
         GameSnippet['badges'] = data.header?.badges?.map((item: any) => item.metadataBadgeRenderer?.label);
         GameSnippet['boxart'] = new URL(data?.header?.boxArt?.thumbnails[0].url.split('=')[0])
         GameSnippet['banner'] = new URL(data?.header?.banner?.thumbnails[0].url.split('=')[0])
-		GameSnippet['trailerId'] = data.header.buttons.find((button: any) => button.buttonRenderer.text.runs[0].text === "Watch trailer")?.buttonRenderer.navigationEndpoint.watchEndpoint.videoId
+		GameSnippet['trailerId'] = data.header.buttons.find((button: any) => button.buttonRenderer.text.runs[0].text === "Watch trailer")?.buttonRenderer.navigationEndpoint.watchEndpoint?.videoId
 
         return GameSnippet;
     }
