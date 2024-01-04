@@ -27,29 +27,21 @@ export type SearchParams$Gaming = {
 
 export async function Request$Gaming(searchParams: SearchParams$Gaming, client: YouTubeClient, context: YouTubeContext) {
 	context.currentUrl = urlMap[searchParams.tab]
+	const continuation = searchParams.continuation;
 	let data: any;
 	try {
-		if (searchParams.continuation) {
-			const continuationBody = JSON.stringify(new Body$Continuation({ continuation: searchParams.continuation }, client.config));
-			const continuationResponse = await Endpoint$Browse.post(continuationBody, client, context);
-			if(!continuationResponse.onResponseReceivedActions) {
+		if (continuation !== undefined) {
+			const continuationBody = JSON.stringify(new Body$Continuation({ continuation: continuation}, client.config));
+			data = await Endpoint$Browse.post(continuationBody, client, context);
+			if(!data.onResponseReceivedActions) {
 				throw new ContinuationTimeoutError();
 			}
-			if (searchParams.tab === "live") {
-				data = continuationResponse.onResponseReceivedActions[0].appendContinuationItemsAction.continuationItems
-				return Resource$GamingLive.parse({ live: data })
-			} else if (searchParams.tab === "trending") {
-				data = continuationResponse.onResponseReceivedActions[0].appendContinuationItemsAction.continuationItems
-				return Resource$GamingTrending.parse({ trending: data })
-			} else {
-				throw Error(`Unknown tab - ${searchParams.tab}`)
-			}
-
 		} else {
 			const body = JSON.stringify(new Body$Gaming(searchParams, client.config))
 			data = await Endpoint$Browse.post(body, client, context)
-			return Resource$Gaming.parse(data);
 		}
+
+		return Resource$Gaming.parse(data, Boolean(continuation));
 	} catch (err: any) {
 		if (err instanceof YouTubeClientScraperError) {
 			throw err

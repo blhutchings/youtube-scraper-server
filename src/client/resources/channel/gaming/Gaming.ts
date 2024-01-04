@@ -4,43 +4,61 @@ import { Schema$GamingLive, Resource$GamingLive } from "./GamingLive.js";
 import { Schema$GamingTrending, Resource$GamingTrending } from "./GamingTrending.js";
 
 export interface Schema$Gaming {
-    live?: Schema$GamingLive
-    trending?: Schema$GamingTrending;
+	live?: Schema$GamingLive
+	trending?: Schema$GamingTrending;
 }
 
 export interface Map$Gaming {
-    live?: Record<string, any>[];
-    trending?: Record<string, any>[];
+	live?: Record<string, any>[];
+	trending?: Record<string, any>[];
 }
 
 
 export class Resource$Gaming {
-    static parse(data: Record<string, any>, continuation?: boolean): Schema$Gaming {
-        const map: Map$Gaming = Resource$Gaming.map(data);
-        let Gaming: Schema$Gaming = {};
+	static parse(data: Record<string, any>, continuation?: boolean): Schema$Gaming {
+		let map: Map$Gaming;
+		if (continuation) {
+			map = Resource$Gaming.continuationMap(data);
+		} else {
+			map = Resource$Gaming.map(data);
+		}
+		let Gaming: Schema$Gaming = {};
 
-        Gaming['live'] = map.live ? Resource$GamingLive.parse(map) : undefined;
-        //Gaming['trending'] = map.trending ? Resource$GamingTrending.parse(map, client, context) : undefined;
-        
-        return Gaming;
-    }
+		Gaming['live'] = map.live ? Resource$GamingLive.parse(map) : undefined;
+		//Gaming['trending'] = map.trending ? Resource$GamingTrending.parse(map, client, context) : undefined;
 
-    private static map(data: Record<string, any>): Map$Gaming {
-         let Map: Map$Gaming = {};
+		return Gaming;
+	}
 
-        data?.contents?.twoColumnBrowseResultsRenderer?.tabs?.forEach((tab: any) => {
-            if (tab?.tabRenderer?.selected === true) {
-                const shelfRenderer = tab?.tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].shelfRenderer
-                const gridRenderer = shelfRenderer.content.gridRenderer;
-                if (gridRenderer.targetId === "browse-feedUCOpNcN46UbXVtpKMrmU4Abgtrending580") {
-                    Map['trending'] = shelfRenderer.content.gridRenderer.items
-                } else if (gridRenderer.targetId === "browse-feedUCOpNcN46UbXVtpKMrmU4Abggames235") {
-                    Map['live'] = shelfRenderer.content.gridRenderer.items
-                } else {
-                    throw new Error("Unidentified shelfTitle", {cause: data})
-                }
-            }
-        });
-        return Map;
-    }
+	private static map(data: Record<string, any>): Map$Gaming {
+		let Map: Map$Gaming = {};
+		data?.contents?.twoColumnBrowseResultsRenderer?.tabs?.forEach((tab: any) => {
+			if (tab?.tabRenderer?.selected === true) {
+				const shelfRenderer = tab?.tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].shelfRenderer
+				const gridRenderer = shelfRenderer.content.gridRenderer;
+				if (gridRenderer.targetId === "browse-feedUCOpNcN46UbXVtpKMrmU4Abgtrending580") {
+					Map['trending'] = shelfRenderer.content.gridRenderer.items
+				} else if (gridRenderer.targetId === "browse-feedUCOpNcN46UbXVtpKMrmU4Abggames235") {
+					Map['live'] = shelfRenderer.content.gridRenderer.items
+				} else {
+					throw new Error("Unidentified shelfTitle", { cause: data })
+				}
+			}
+		});
+		return Map;
+	}
+
+	private static continuationMap(data: Record<string, any>): Map$Gaming {
+		let Map: Map$Gaming = {};
+		const targetId = data.onResponseReceivedActions[0].appendContinuationItemsAction.targetId;
+		if (targetId === "browse-feedUCOpNcN46UbXVtpKMrmU4Abgtrending580") {
+			Map['trending'] = data.onResponseReceivedActions[0].appendContinuationItemsAction.continuationItems;
+		} else if (targetId === "browse-feedUCOpNcN46UbXVtpKMrmU4Abggames235") {
+			Map['live'] = data.onResponseReceivedActions[0].appendContinuationItemsAction.continuationItems;
+		} else {
+			throw new Error("Unidentified targetId", { cause: data })
+		}
+		return Map;
+	}
+
 }

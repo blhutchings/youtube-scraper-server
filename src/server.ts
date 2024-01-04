@@ -19,7 +19,7 @@ async function main() {
 
 	const app: Express = express()
 	app.use(express.json());
-	const port = 5000
+	let port = 3000;
 	if (port === 5000) {
 		console.warn("Set to 3000 before docker")
 	}
