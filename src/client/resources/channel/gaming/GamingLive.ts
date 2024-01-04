@@ -1,20 +1,14 @@
-import YouTubeClient from "../../../clients/YouTubeClient.js";
-import YouTubeContext from "../../../clients/YouTubeContext.js";
-import { Body$Continuation } from "../../../requests/Continuation.js";
-import Endpoint$Browse from "../../../requests/base-requests/Endpoint$Browse.js";
 import { Map$Gaming } from "./Gaming.js";
 import { Schema$GameCard, Resource$GameCard } from "../../common/GameCard.js";
 
 export interface Schema$GamingLive {
     results?: Schema$GameCard[];
-    continue: () => Promise<Schema$GamingLive | undefined>;
+    continuation?: string
 }
 
 export class Resource$GamingLive {
-    static parse(data: Map$Gaming, client: YouTubeClient, context: YouTubeContext): Schema$GamingLive {
-        let GamingLive: Schema$GamingLive = {
-            continue: async () => { return undefined }
-        };
+    static parse(data: Map$Gaming): Schema$GamingLive {
+        let GamingLive: Schema$GamingLive = {};
 
         GamingLive['results'] = data.live?.flatMap((item: any) => {
             if (item.gameCardRenderer?.game.gameDetailsRenderer) {
@@ -24,9 +18,13 @@ export class Resource$GamingLive {
             }
         })
 
-        const token = data.live?.findLast((item: any) => item?.continuationItemRenderer)?.continuationItemRenderer.continuationEndpoint.continuationCommand.token
-        if (token) {
-            GamingLive['continue'] = async () => {
+        const continuation = data.live?.findLast((item: any) => item?.continuationItemRenderer);
+		const token = continuation?.continuationItemRenderer.continuationEndpoint.continuationCommand.token
+		if (token) {
+			GamingLive['results']?.pop();
+			GamingLive['continuation'] = token;
+			/*
+            GamingLive['continuation'] = async () => {
                 const continuationContext = {
                     ...context,
                     referer: `https://www.youtube.com/${context.currentUrl}`
@@ -37,6 +35,7 @@ export class Resource$GamingLive {
                 const items = continuationResponse.onResponseReceivedActions[0].appendContinuationItemsAction.continuationItems
                 return Resource$GamingLive.parse({ live: items }, client, context)
             }
+			*/
         }
         return GamingLive;
     }

@@ -15,10 +15,12 @@ export class Resource$GameCard {
 
         GamingGameCard['title'] = gameDetailsRenderer.title.simpleText;
         GamingGameCard['channelId'] = gameDetailsRenderer.endpoint.browseEndpoint.browseId;
-        GamingGameCard['boxArt'] = gameDetailsRenderer.boxArt.thumbnails[0];
+        GamingGameCard['boxArt'] = gameDetailsRenderer.boxArt.thumbnails[0].url;
         GamingGameCard['liveViewersText'] = gameDetailsRenderer.liveViewersText?.runs[0].text || "0";
         GamingGameCard['isOfficialBoxArt'] = gameDetailsRenderer.isOfficialBoxArt;
-        
+		if (GamingGameCard['boxArt'] && GamingGameCard['boxArt'].startsWith("//")) {
+			GamingGameCard['boxArt'] = "https:" + GamingGameCard['boxArt'];
+		}
         return GamingGameCard;
     }
 }

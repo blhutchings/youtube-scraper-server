@@ -14,7 +14,6 @@ export default class Endpoint$Browse  {
             body: body,
             parseJson: (text: string) => JSON.parse(text)
         })
-
         return response.json<T>();
     }
 }
