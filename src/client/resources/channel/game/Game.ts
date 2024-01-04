@@ -7,6 +7,7 @@ import { Schema$GameSnippet, Resource$GameSnippet } from "./GameSnippet.js";
 import { Resource$GameHome, Schema$GameHome } from "./GameHome.js";
 import { Resource$GameOfficial, Schema$GameOfficial } from "./GameOfficial.js";
 import InvalidMixedIdError from "../../../util/InvalidMixedIdError.js";
+import { ChannelRedirectError } from "../../../util/MovedPermanentlyError.js";
 
 
 export interface Schema$Game {
@@ -31,7 +32,10 @@ export type Map$Game = {
 
 export class Resource$Game {
     static parse(data: any, client: YouTubeClient, context: YouTubeContext): Schema$Game {
-		if (data.header?.interactiveTabbedHeaderRenderer.type !== 'INTERACTIVE_TABBED_HEADER_RENDERER_TYPE_GAMING') {
+		if (data.onResponseReceivedActions?.[0].navigateAction.endpoint.browseEndpoint.browseId) {
+			throw new ChannelRedirectError(data.onResponseReceivedActions?.[0].navigateAction.endpoint.browseEndpoint.browseId);
+		}
+		if (data.header?.interactiveTabbedHeaderRenderer?.type !== 'INTERACTIVE_TABBED_HEADER_RENDERER_TYPE_GAMING') {
 			throw new InvalidMixedIdError("browseId is not for a VideoGame Channel", data.metadata.channelMetadataRenderer.externalId)
 		}
 		
