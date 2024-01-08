@@ -33,7 +33,7 @@ async function main() {
 		} catch (err) {
 			switch (true) {
 				case err instanceof HTTPError:
-					console.log(`POST - /game [${err.code}] - ${body.videoId} - ${err}`)
+					console.log(`POST - /game [${err.response.statusCode}] - ${body.videoId} - ${err}`)
 					return res.status(Number(err.code)).send(err)
 				default:
 					console.log(`POST - /video [500] - ${body.videoId}`)
@@ -52,7 +52,7 @@ async function main() {
 		} catch (err) {
 			switch (true) {
 				case err instanceof HTTPError:
-					console.log(`POST - /game [${err.code}] - ${body.browseId} - ${body.tab} - ${err}`)
+					console.log(`POST - /game [${err.response.statusCode}] - ${body.browseId} - ${body.tab} - ${err}`)
 					return res.status(Number(err.code)).send(err);
 				case err instanceof ChannelRedirectError:
 					console.log(`POST - /game [${err.statusCode}] - ${body.browseId} -> ${err.channelId}`)
@@ -73,7 +73,7 @@ async function main() {
 		} catch (err) {
 			switch (true) {
 				case err instanceof HTTPError:
-					console.log(`POST - /gaming [${err.code}] - ${body.tab} - ${err}`);
+					console.log(`POST - /gaming [${err.response.statusCode}] - ${body.tab} - ${err}`);
 					return res.status(Number(err.code)).send(err);
 				case err instanceof ContinuationTimeoutError:
 					console.log(`POST - /gaming [${err.statusCode}] - ${body.tab} - ${err}`);
