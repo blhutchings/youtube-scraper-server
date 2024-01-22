@@ -4,9 +4,10 @@ import YouTubeGotClient from './client/clients/YouTubeGotClient.js';
 import { SearchParams$Video } from './client/requests/Request$Video.js';
 import { SearchParams$Game } from './client/requests/Request$Game.js';
 import { HTTPError } from 'got';
-import { ChannelRedirectError } from './client/util/MovedPermanentlyError.js';
+import { ChannelRedirectError } from './client/errors/MovedPermanentlyError.js';
 import { SearchParams$Gaming } from './client/requests/Request$Gaming.js';
-import { ContinuationTimeoutError } from './client/util/ContinuationTimeoutError.js';
+import { ContinuationTimeoutError } from './client/errors/ContinuationTimeoutError.js';
+import { ResourceNotFoundError } from './client/errors/ResourceNotFoundError.js';
 
 async function main() {
 	console.log("Creating HTTP Client...")
@@ -33,8 +34,9 @@ async function main() {
 		} catch (err) {
 			switch (true) {
 				case err instanceof HTTPError:
-					console.log(`POST - /game [${err.response.statusCode}] - ${body.videoId} - ${err}`)
-					return res.status(Number(err.code)).send(err)
+					const code = Number(err.response.statusCode);
+					console.log(`POST - /game [${code}] - ${body.videoId} - ${err}`)
+					return res.status(code).send(err)
 				default:
 					console.log(`POST - /video [500] - ${body.videoId}`)
 					return res.status(500).send(err)
@@ -52,10 +54,14 @@ async function main() {
 		} catch (err) {
 			switch (true) {
 				case err instanceof HTTPError:
-					console.log(`POST - /game [${err.response.statusCode}] - ${body.browseId} - ${body.tab} - ${err}`)
-					return res.status(Number(err.code)).send(err);
+					const code = Number(err.response.statusCode);
+					console.log(`POST - /game [${code}] - ${body.browseId} - ${body.tab} - ${err}`)
+					return res.status(code).send(err);
 				case err instanceof ChannelRedirectError:
 					console.log(`POST - /game [${err.statusCode}] - ${body.browseId} -> ${err.channelId}`)
+					return res.status(err.statusCode).send(err)
+				case err instanceof ResourceNotFoundError:
+					console.log(`POST - /game [${err.statusCode}] - ${body.browseId}`)
 					return res.status(err.statusCode).send(err)
 				default:
 					console.log(`POST - /game [500] - ${body.browseId} - ${body.tab} - ${err}`)
@@ -73,8 +79,9 @@ async function main() {
 		} catch (err) {
 			switch (true) {
 				case err instanceof HTTPError:
-					console.log(`POST - /gaming [${err.response.statusCode}] - ${body.tab} - ${err}`);
-					return res.status(Number(err.code)).send(err);
+					const code = Number(err.response.statusCode);
+					console.log(`POST - /gaming [${code}] - ${body.tab} - ${err}`);
+					return res.status(code).send(err);
 				case err instanceof ContinuationTimeoutError:
 					console.log(`POST - /gaming [${err.statusCode}] - ${body.tab} - ${err}`);
 					return res.status(Number(err.statusCode)).send(err);

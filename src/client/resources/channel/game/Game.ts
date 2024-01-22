@@ -8,6 +8,7 @@ import { Resource$GameHome, Schema$GameHome } from "./GameHome.js";
 import { Resource$GameOfficial, Schema$GameOfficial } from "./GameOfficial.js";
 import InvalidMixedIdError from "../../../errors/InvalidMixedIdError.js";
 import { ChannelRedirectError } from "../../../errors/MovedPermanentlyError.js";
+import { ResourceNotFoundError } from "../../../errors/ResourceNotFoundError.js";
 
 
 export interface Schema$Game {
@@ -35,6 +36,11 @@ export class Resource$Game {
 		if (data.onResponseReceivedActions?.[0].navigateAction.endpoint.browseEndpoint.browseId) {
 			throw new ChannelRedirectError(data.onResponseReceivedActions?.[0].navigateAction.endpoint.browseEndpoint.browseId);
 		}
+
+		if (data?.alerts) {
+			throw new ResourceNotFoundError()
+		}
+
 		if (data.header?.interactiveTabbedHeaderRenderer?.type !== 'INTERACTIVE_TABBED_HEADER_RENDERER_TYPE_GAMING') {
 			throw new InvalidMixedIdError("browseId is not for a VideoGame Channel", data.metadata.channelMetadataRenderer.externalId)
 		}
