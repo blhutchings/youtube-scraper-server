@@ -4,9 +4,9 @@ import { Resource$Gaming } from "../resources/channel/gaming/Gaming.js";
 import { Resource$GamingLive } from "../resources/channel/gaming/GamingLive.js";
 import { Resource$GamingTrending } from "../resources/channel/gaming/GamingTrending.js";
 import { YouTubeConfig } from "../types/YouTubeConfig.js";
-import { ContinuationTimeoutError } from "../util/ContinuationTimeoutError.js";
-import ResourceParseError from "../util/ResourceParseError.js";
-import { YouTubeClientScraperError } from "../util/YouTubeClientScraperError.js";
+import { ContinuationTimeoutError } from "../errors/ContinuationTimeoutError.js";
+import ResourceParseError from "../errors/ResourceParseError.js";
+import { YouTubeClientScraperError } from "../errors/YouTubeClientScraperError.js";
 import { Body$Continuation } from "./Continuation.js";
 import Endpoint$Browse from "./base-requests/Endpoint$Browse.js";
 

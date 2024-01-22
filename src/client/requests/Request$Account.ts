@@ -2,8 +2,8 @@ import YouTubeClient from "../clients/YouTubeClient.js"
 import YouTubeContext from "../clients/YouTubeContext.js"
 import { Resource$Account } from "../resources/channel/account/Account.js"
 import { YouTubeConfig } from "../types/YouTubeConfig.js"
-import ResourceParseError from "../util/ResourceParseError.js"
-import { YouTubeClientScraperError } from "../util/YouTubeClientScraperError.js"
+import ResourceParseError from "../errors/ResourceParseError.js"
+import { YouTubeClientScraperError } from "../errors/YouTubeClientScraperError.js"
 import Endpoint$Browse from "./base-requests/Endpoint$Browse.js"
 
 const tabParams = {

@@ -20,11 +20,11 @@ export default class YouTubeGotClient implements YouTubeClient {
 	static async createClient(options?: Options): Promise<YouTubeClient> {
 		const defaultOptions = new Options(options, {
 			prefixUrl: "https://www.youtube.com/",
-			http2: true,
-			agent: {
-				http2: new YouTubeClientAgent()
-			},
-			cookieJar: new CookieJar()
+			//http2: true,
+			//agent: {
+			//	http2: new YouTubeClientAgent()
+			//},
+			//cookieJar: new CookieJar()
 		})
 
 		let client = got.extend(defaultOptions)

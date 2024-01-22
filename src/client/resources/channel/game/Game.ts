@@ -6,8 +6,8 @@ import { Schema$GameRecent, Resource$GameRecent } from "./GameRecent.js";
 import { Schema$GameSnippet, Resource$GameSnippet } from "./GameSnippet.js";
 import { Resource$GameHome, Schema$GameHome } from "./GameHome.js";
 import { Resource$GameOfficial, Schema$GameOfficial } from "./GameOfficial.js";
-import InvalidMixedIdError from "../../../util/InvalidMixedIdError.js";
-import { ChannelRedirectError } from "../../../util/MovedPermanentlyError.js";
+import InvalidMixedIdError from "../../../errors/InvalidMixedIdError.js";
+import { ChannelRedirectError } from "../../../errors/MovedPermanentlyError.js";
 
 
 export interface Schema$Game {

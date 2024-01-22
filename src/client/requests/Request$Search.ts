@@ -2,8 +2,8 @@ import YouTubeClient from "../clients/YouTubeClient.js"
 import YouTubeContext from "../clients/YouTubeContext.js"
 import { Resource$Search } from "../resources/search/Search.js"
 import { YouTubeConfig } from "../types/YouTubeConfig.js"
-import ResourceParseError from "../util/ResourceParseError.js"
-import { YouTubeClientScraperError } from "../util/YouTubeClientScraperError.js"
+import ResourceParseError from "../errors/ResourceParseError.js"
+import { YouTubeClientScraperError } from "../errors/YouTubeClientScraperError.js"
 import Endpoint$Search from "./base-requests/Endpoint$Search.js"
 
 const urlMap = (query: string) => {

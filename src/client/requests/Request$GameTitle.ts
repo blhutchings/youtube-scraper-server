@@ -1,9 +1,9 @@
 import YouTubeContext from "../clients/YouTubeContext.js";
 import YouTubeClient from "../clients/YouTubeClient.js";
 import { Resource$GameTitle } from "../resources/gaming/GameTitle.js";
-import ResourceParseError from "../util/ResourceParseError.js";
+import ResourceParseError from "../errors/ResourceParseError.js";
 import Endpoint$GameTitle from "./base-requests/Endpoint$GameTitle.js";
-import { YouTubeClientScraperError } from "../util/YouTubeClientScraperError.js";
+import { YouTubeClientScraperError } from "../errors/YouTubeClientScraperError.js";
 import { YouTubeConfig } from "../types/YouTubeConfig.js";
 
 export type SearchParams$GameTitle = {
