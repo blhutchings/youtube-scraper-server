@@ -7,14 +7,12 @@ import { Map$Game } from "./Game.js";
 
 export interface Schema$GameLive {
     results?: Schema$RichItemRenderer[];
-    continue: () => Promise<Schema$GameLive | undefined>;
+    continuation?: string;
 }
 
 export class Resource$GameLive {
     static parse(data: Map$Game, client: YouTubeClient, context: YouTubeContext): Schema$GameLive {
-        let GameLive: Schema$GameLive = {
-            continue: async () => { return undefined }
-        };
+        let GameLive: Schema$GameLive = {};
 
         GameLive['results'] = data?.live?.flatMap((item: any) => {
             if (item?.gridVideoRenderer) {
@@ -25,19 +23,10 @@ export class Resource$GameLive {
         })
 
         const token = data.live?.findLast((item: any) => item?.continuationItemRenderer)?.continuationItemRenderer.continuationEndpoint.continuationCommand.token
-        if (token) {
-            GameLive['continue'] = async () => {
-                const continuationContext = {
-                    ...context,
-                    referer: `https://www.youtube.com/${context.currentUrl}`
-                }
-    
-                const continuationBody = JSON.stringify(new Body$Continuation({ continuation: token }, client.config));
-                const continuationResponse = await Endpoint$Browse.post(continuationBody, client, continuationContext);
-                const items = continuationResponse.onResponseReceivedActions[0].appendContinuationItemsAction.continuationItems
-                return Resource$GameLive.parse({ live: items }, client, context)
-            }
-        }
+		if (token) {
+			GameLive['results']?.pop();
+			GameLive['continuation'] = token;
+		}
         return GameLive;
     }
 }

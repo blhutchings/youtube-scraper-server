@@ -32,36 +32,50 @@ export type Map$Game = {
 }
 
 export class Resource$Game {
-    static parse(data: any, client: YouTubeClient, context: YouTubeContext): Schema$Game {
-		if (data.onResponseReceivedActions?.[0].navigateAction.endpoint.browseEndpoint.browseId) {
-			throw new ChannelRedirectError(data.onResponseReceivedActions?.[0].navigateAction.endpoint.browseEndpoint.browseId);
+    static parse(data: any, client: YouTubeClient, context: YouTubeContext, continuation: boolean): Schema$Game {
+				
+        let map: Map$Game
+		if (continuation) {
+			map = Resource$Game.continuationMap(data);
+
+			let Game: Schema$Game = {};
+			Game['live'] = map.live ? Resource$GameLive.parse(map, client, context) : undefined;
+
+			return Game;
+		} else {
+
+			// Check if Game Redirects
+			if (data.onResponseReceivedActions?.[0].navigateAction.endpoint.browseEndpoint.browseId) {
+				throw new ChannelRedirectError(data.onResponseReceivedActions?.[0].navigateAction.endpoint.browseEndpoint.browseId);
+			}
+			
+			// Check if Game does not exist
+			if (data?.alerts) {
+				throw new ResourceNotFoundError()
+			}
+	
+			// Check if Channel is a special Game Channel
+			if (data.header?.interactiveTabbedHeaderRenderer?.type !== 'INTERACTIVE_TABBED_HEADER_RENDERER_TYPE_GAMING') {
+				throw new InvalidMixedIdError("browseId is not for a VideoGame Channel", data.metadata.channelMetadataRenderer.externalId)
+			}
+
+			map = Resource$Game.map(data);
+			let Game: Schema$Game = {};
+
+
+			Game['id'] = map.microformat.urlCanonical.split('/').pop();
+			Game['snippet'] = Resource$GameSnippet.parse(map);
+			Game['home'] = map.home ? Resource$GameHome.parse(map): undefined;
+			Game['live'] = map.live ? Resource$GameLive.parse(map, client, context) : undefined;
+			Game['recent'] = map.recent ? Resource$GameRecent.parse(map) : undefined;
+			Game['official'] = map.official ? Resource$GameOfficial.parse(map) : undefined;
+			Game['about'] = map.about ? Resource$GameAbout.parse(map) : undefined;
+			return Game;
 		}
-
-		if (data?.alerts) {
-			throw new ResourceNotFoundError()
-		}
-
-		if (data.header?.interactiveTabbedHeaderRenderer?.type !== 'INTERACTIVE_TABBED_HEADER_RENDERER_TYPE_GAMING') {
-			throw new InvalidMixedIdError("browseId is not for a VideoGame Channel", data.metadata.channelMetadataRenderer.externalId)
-		}
-		
-        const map: Map$Game = Resource$Game.map(data);
-        let Game: Schema$Game = {};
-
-
-        Game['id'] = map.microformat.urlCanonical.split('/').pop();
-        Game['snippet'] = Resource$GameSnippet.parse(map);
-        Game['home'] = map.home ? Resource$GameHome.parse(map): undefined;
-        Game['live'] = map.live ? Resource$GameLive.parse(map, client, context) : undefined;
-        Game['recent'] = map.recent ? Resource$GameRecent.parse(map) : undefined;
-		Game['official'] = map.official ? Resource$GameOfficial.parse(map) : undefined;
-        Game['about'] = map.about ? Resource$GameAbout.parse(map) : undefined;
-
-        return Game;
     }
 
-    private static map(data: any): Map$Game {
-        let Map: any = {};
+    private static map(data: Record<string, any>): Map$Game {
+        let Map: Map$Game = {};
 
         Map['header'] = data.header.interactiveTabbedHeaderRenderer
         Map['microformat'] = data.microformat.microformatDataRenderer
@@ -74,6 +88,12 @@ export class Resource$Game {
         });
         return Map;
     }
+
+	private static continuationMap(data: Record<string, any>): Map$Game {
+		let Map: Map$Game = {};	
+		Map['live'] = data.onResponseReceivedActions[0].appendContinuationItemsAction.continuationItems;
+		return Map;
+	}
 
     private static tabMap = {
         "home": (tab: any) => {

@@ -23,19 +23,6 @@ export class Resource$GamingLive {
 		if (token) {
 			GamingLive['results']?.pop();
 			GamingLive['continuation'] = token;
-			/*
-            GamingLive['continuation'] = async () => {
-                const continuationContext = {
-                    ...context,
-                    referer: `https://www.youtube.com/${context.currentUrl}`
-                }
-    
-                const continuationBody = JSON.stringify(new Body$Continuation({ continuation: token }, client.config));
-                const continuationResponse = await Endpoint$Browse.post(continuationBody, client, continuationContext);
-                const items = continuationResponse.onResponseReceivedActions[0].appendContinuationItemsAction.continuationItems
-                return Resource$GamingLive.parse({ live: items }, client, context)
-            }
-			*/
         }
         return GamingLive;
     }
