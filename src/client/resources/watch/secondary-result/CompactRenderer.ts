@@ -50,16 +50,20 @@ export default class Resource$CompactRenderer {
         CompactRenderer['channelId'] = renderer?.longBylineText?.runs?.[0]?.navigationEndpoint?.browseEndpoint?.browseId
         CompactRenderer['channelHandle'] = getChannelHandle(renderer?.longBylineText?.runs?.[0]?.navigationEndpoint?.browseEndpoint?.canonicalBaseUrl)
 
+
+
         if (key === "compactVideoRenderer") {
             return Resource$CompactRendererVideo.parse(renderer, CompactRenderer)
         } else if (key === "compactPlaylistRenderer" || key === "compactRadioRenderer") {
             return Resource$CompactRendererPlaylist.parse(compactUnknownRenderer, CompactRenderer)
         } else if (key === "compactMovieRenderer") {
             return Resource$CompactRendererMovie.parse(renderer, CompactRenderer);
+		} else if (key === "adSlotRenderer") {
+			return undefined;
         } else if(key !== "continuationItemRenderer") {
             console.warn("Resource$VideoSecondaryResults - Unknown key, please report this issue", compactUnknownRenderer, context)
         }
-        return undefined;
+		return undefined;   
     }
 }
 
