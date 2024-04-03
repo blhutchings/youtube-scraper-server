@@ -100,7 +100,7 @@ export class Resource$Game {
             return tab.tabRenderer.content.sectionListRenderer?.contents
         },
         "live": (tab: any) => {
-            return tab.tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents?.[0].shelfRenderer.content.gridRenderer.items
+            return tab.tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents?.[0].shelfRenderer?.content.gridRenderer.items
         },
         "recent": (tab: any) => {
             return tab.tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents?.[0].gridRenderer?.items
