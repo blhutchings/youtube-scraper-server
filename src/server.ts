@@ -21,8 +21,8 @@ async function main() {
 	const app: Express = express()
 	app.use(express.json());
 	let port = 3000;
-	if (port === 5000) {
-		console.warn("Set to 3000 before docker")
+	if (process.env.PRODUCTION) {
+		port = 3000;
 	}
 
 
@@ -93,7 +93,7 @@ async function main() {
 	});
 
 	app.listen(port, () => {
-		console.log(`Example app listening on port ${port}`)
+		console.log(`Scraping server listening on port ${port}`)
 	})
 
 }
