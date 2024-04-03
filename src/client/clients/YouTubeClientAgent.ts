@@ -9,7 +9,7 @@ export default class YouTubeClientAgent extends http2.Agent {
     }
 
 	async createConnection() {
-		return http2.Agent.connect(new URL("https://www.youtube.com"), this.options)
+		return http2.Agent.connect(new URL("https://www.youtube.com/"), this.options)
     }
 }
 
